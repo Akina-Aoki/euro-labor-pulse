@@ -491,9 +491,6 @@ function Filters({
   years,
   year,
   setYear,
-  countries,
-  trendCountries,
-  setTrendCountries,
   sortDir,
   setSortDir,
   topN,
@@ -503,120 +500,40 @@ function Filters({
   years: number[];
   year: number;
   setYear: (y: number) => void;
-  countries: string[];
-  trendCountries: string[];
-  setTrendCountries: (c: string[]) => void;
   sortDir: SortDir;
   setSortDir: (d: SortDir) => void;
   topN: TopN;
   setTopN: (n: TopN) => void;
   onReset: () => void;
 }) {
-  const toggleCountry = (c: string) => {
-    setTrendCountries(
-      trendCountries.includes(c)
-        ? trendCountries.filter((x) => x !== c)
-        : [...trendCountries, c],
-    );
-  };
-
   return (
     <div className="rounded-xl border border-border bg-card p-4 shadow-sm">
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-3 items-end">
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3 items-end">
         <div>
-          <Label className="text-xs uppercase tracking-wider text-muted-foreground mb-1.5 block">
-            Year
-          </Label>
+          <Label className="text-xs uppercase tracking-wider text-muted-foreground mb-1.5 block">Year</Label>
           <Select value={String(year)} onValueChange={(v) => setYear(Number(v))}>
-            <SelectTrigger>
-              <SelectValue />
-            </SelectTrigger>
+            <SelectTrigger><SelectValue /></SelectTrigger>
             <SelectContent>
               {[...years].reverse().map((y) => (
-                <SelectItem key={y} value={String(y)}>
-                  {y}
-                </SelectItem>
+                <SelectItem key={y} value={String(y)}>{y}</SelectItem>
               ))}
             </SelectContent>
           </Select>
         </div>
-
-        <div className="lg:col-span-2">
-          <Label className="text-xs uppercase tracking-wider text-muted-foreground mb-1.5 block">
-            Countries (trend chart)
-          </Label>
-          <Popover>
-            <PopoverTrigger asChild>
-              <Button
-                variant="outline"
-                className="w-full justify-start font-normal h-9 text-left"
-              >
-                {trendCountries.length === 0
-                  ? "Select countries…"
-                  : `${trendCountries.length} selected`}
-              </Button>
-            </PopoverTrigger>
-            <PopoverContent className="w-72 p-0" align="start">
-              <div className="max-h-72 overflow-auto p-2">
-                {countries.map((c) => {
-                  const checked = trendCountries.includes(c);
-                  return (
-                    <label
-                      key={c}
-                      className="flex items-center gap-2 px-2 py-1.5 rounded hover:bg-accent/10 cursor-pointer text-sm"
-                    >
-                      <Checkbox checked={checked} onCheckedChange={() => toggleCountry(c)} />
-                      {c}
-                    </label>
-                  );
-                })}
-              </div>
-            </PopoverContent>
-          </Popover>
-          {trendCountries.length > 0 && (
-            <div className="flex flex-wrap gap-1 mt-2">
-              {trendCountries.map((c) => (
-                <span
-                  key={c}
-                  className="inline-flex items-center gap-1 text-xs px-2 py-0.5 rounded-full bg-[var(--elms-plum)]/10 text-[var(--elms-plum)]"
-                >
-                  {c}
-                  <button
-                    type="button"
-                    onClick={() => toggleCountry(c)}
-                    className="hover:opacity-70"
-                  >
-                    <X className="size-3" />
-                  </button>
-                </span>
-              ))}
-            </div>
-          )}
-        </div>
-
         <div>
-          <Label className="text-xs uppercase tracking-wider text-muted-foreground mb-1.5 block">
-            Sort by
-          </Label>
+          <Label className="text-xs uppercase tracking-wider text-muted-foreground mb-1.5 block">Sort by</Label>
           <Select value={sortDir} onValueChange={(v) => setSortDir(v as SortDir)}>
-            <SelectTrigger>
-              <SelectValue />
-            </SelectTrigger>
+            <SelectTrigger><SelectValue /></SelectTrigger>
             <SelectContent>
               <SelectItem value="desc">High to Low</SelectItem>
               <SelectItem value="asc">Low to High</SelectItem>
             </SelectContent>
           </Select>
         </div>
-
         <div>
-          <Label className="text-xs uppercase tracking-wider text-muted-foreground mb-1.5 block">
-            Show Top N
-          </Label>
+          <Label className="text-xs uppercase tracking-wider text-muted-foreground mb-1.5 block">Show Top N</Label>
           <Select value={String(topN)} onValueChange={(v) => setTopN(Number(v) as TopN)}>
-            <SelectTrigger>
-              <SelectValue />
-            </SelectTrigger>
+            <SelectTrigger><SelectValue /></SelectTrigger>
             <SelectContent>
               <SelectItem value="10">Top 10</SelectItem>
               <SelectItem value="15">Top 15</SelectItem>
@@ -626,7 +543,6 @@ function Filters({
           </Select>
         </div>
       </div>
-
       <div className="flex justify-end mt-3">
         <Button variant="ghost" size="sm" onClick={onReset} className="text-xs">
           <RotateCcw className="size-3.5" /> Reset filters
@@ -635,3 +551,4 @@ function Filters({
     </div>
   );
 }
+
