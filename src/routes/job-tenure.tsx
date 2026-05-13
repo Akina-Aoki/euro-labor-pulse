@@ -690,11 +690,6 @@ function Filters(props: {
     sortDir, setSortDir, topN, setTopN, coverage, setCoverage, onReset,
   } = props;
 
-  const toggleCountry = (c: string) => {
-    setTrendCountries(
-      trendCountries.includes(c) ? trendCountries.filter((x) => x !== c) : [...trendCountries, c],
-    );
-  };
 
   return (
     <div className="rounded-xl border border-border bg-card p-4 shadow-sm">
