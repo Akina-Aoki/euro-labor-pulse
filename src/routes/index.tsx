@@ -75,28 +75,13 @@ function HomePage() {
             and gender-aware data visualizations.
           </p>
 
-          <ul className="mt-6 grid grid-cols-1 sm:grid-cols-2 gap-x-6 gap-y-2 text-sm text-[var(--elms-ink)]/80 max-w-xl">
+          <ul className="mt-8 grid grid-cols-1 sm:grid-cols-2 gap-x-6 gap-y-2.5 text-sm text-[var(--elms-ink)]/80 max-w-xl">
             <li className="flex items-center gap-2"><Dot /> Employment rate by sex</li>
             <li className="flex items-center gap-2"><Dot /> Job tenure by sex</li>
             <li className="flex items-center gap-2"><Dot /> Mean weekly hours by sex</li>
             <li className="flex items-center gap-2"><Dot /> Gender pay gap</li>
             <li className="flex items-center gap-2"><Dot /> In-work at-risk-of-poverty rate</li>
           </ul>
-
-          <div className="mt-8 flex flex-wrap gap-3">
-            <Link
-              to="/employment-rate"
-              className="inline-flex items-center gap-2 rounded-lg bg-[var(--elms-navy)] text-white px-5 py-2.5 text-sm font-medium hover:bg-[var(--elms-navy-deep)] transition-colors shadow-sm"
-            >
-              Open dashboards <ArrowRight className="size-4" />
-            </Link>
-            <Link
-              to="/gender-pay-gap"
-              className="inline-flex items-center gap-2 rounded-lg border border-[var(--elms-navy)]/30 bg-white/70 backdrop-blur px-5 py-2.5 text-sm font-medium text-[var(--elms-ink)] hover:bg-white"
-            >
-              Browse Gender Pay Gap
-            </Link>
-          </div>
         </div>
       </section>
 

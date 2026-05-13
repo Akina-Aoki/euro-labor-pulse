@@ -13,14 +13,15 @@ import {
   XAxis,
   YAxis,
 } from "recharts";
-import { Globe, Scale, TrendingDown, TrendingUp, X, RotateCcw, Info } from "lucide-react";
+import { Globe, Scale, TrendingDown, TrendingUp, RotateCcw, Info } from "lucide-react";
 
 import { DashboardLayout } from "@/components/layout/DashboardLayout";
 import { PageHeader } from "@/components/dashboard/PageHeader";
-import { KpiCard } from "@/components/dashboard/KpiCard";
 import { ChartCard } from "@/components/dashboard/ChartCard";
 import { EmptyState } from "@/components/dashboard/EmptyState";
 import { SourceNote } from "@/components/dashboard/SourceNote";
+import { EuropeTileMap } from "@/components/dashboard/EuropeTileMap";
+import { TrendCountryPicker } from "@/components/dashboard/TrendCountryPicker";
 import {
   Select,
   SelectContent,
@@ -28,8 +29,6 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
-import { Checkbox } from "@/components/ui/checkbox";
 import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
 import {
@@ -91,7 +90,6 @@ function GenderPayGapPage() {
     return (
       <DashboardLayout>
         <PageHeader
-          eyebrow="Dataset · clean_gender_pay_gap.csv"
           title="Gender Pay Gap"
           description="Loading data…"
         />
@@ -187,7 +185,6 @@ function Dashboard({ rows }: { rows: GpgRow[] }) {
   return (
     <DashboardLayout>
       <PageHeader
-        eyebrow="Dataset · clean_gender_pay_gap.csv"
         title="Gender Pay Gap"
         description="Explore how the unadjusted gender pay gap differs across European countries and how it has changed over time."
       />
@@ -210,9 +207,6 @@ function Dashboard({ rows }: { rows: GpgRow[] }) {
         years={years}
         year={year}
         setYear={setYear}
-        countries={countries}
-        trendCountries={trendCountries}
-        setTrendCountries={setTrendCountries}
         sortDir={sortDir}
         setSortDir={setSortDir}
         topN={topN}
@@ -300,6 +294,12 @@ function Dashboard({ rows }: { rows: GpgRow[] }) {
           title="Gender Pay Gap Over Time"
           description={`Trend for ${trendCountries.length} selected ${trendCountries.length === 1 ? "country" : "countries"}`}
         >
+          <TrendCountryPicker
+            countries={countries}
+            selected={trendCountries}
+            onChange={setTrendCountries}
+            helperText="Choose countries to compare in the trend chart. This selection only affects the line chart."
+          />
           {trendCountries.length === 0 ? (
             <EmptyState message="No trend data is available for the selected countries." />
           ) : (
@@ -385,37 +385,27 @@ function Dashboard({ rows }: { rows: GpgRow[] }) {
         </ChartCard>
 
         <ChartCard
-          title={`Countries by Pay Gap Level (${year})`}
-          description="Geographic map fallback — count of countries per pay gap band."
+          title={`Gender Pay Gap Level in Europe (${year})`}
+          description="Hover a country to see its pay gap value and band."
         >
           {yearRows.length === 0 ? (
-            <EmptyState message="No pay gap level summary is available for the selected year." />
+            <EmptyState message="No pay gap data is available for the selected year." />
           ) : (
-            <ResponsiveContainer width="100%" height={340}>
-              <BarChart
-                data={levelSummary}
-                layout="vertical"
-                margin={{ top: 8, right: 24, left: 8, bottom: 8 }}
-              >
-                <CartesianGrid horizontal={false} stroke="rgba(33,56,133,0.1)" />
-                <XAxis type="number" allowDecimals={false} tick={{ fontSize: 11, fill: "#4a4b6b" }} />
-                <YAxis
-                  type="category"
-                  dataKey="level"
-                  width={110}
-                  tick={{ fontSize: 11, fill: "#070836" }}
-                />
-                <Tooltip
-                  formatter={(v: number) => [`${v} countries`, "Count"]}
-                  contentStyle={{ borderRadius: 8, border: "1px solid rgba(33,56,133,0.18)" }}
-                />
-                <Bar dataKey="count" radius={[0, 4, 4, 0]}>
-                  {levelSummary.map((d, i) => (
-                    <Cell key={i} fill={d.color} />
-                  ))}
-                </Bar>
-              </BarChart>
-            </ResponsiveContainer>
+            <EuropeTileMap
+              height={340}
+              data={yearRows.map((r) => ({ country: r.country, value: r.gender_pay_gap }))}
+              colorFor={(v) => PAY_GAP_LEVEL_COLORS[classifyPayGapLevel(v)]}
+              tooltipLines={({ country, value }) => {
+                const lvl = classifyPayGapLevel(value);
+                return value == null
+                  ? [country, "No data"]
+                  : [country, `Gender pay gap: ${value.toFixed(1)}%`, `Level: ${lvl}`];
+              }}
+              legend={[
+                ...PAY_GAP_LEVEL_ORDER.map((l) => ({ color: PAY_GAP_LEVEL_COLORS[l], label: l as string })),
+                { color: PAY_GAP_LEVEL_COLORS["No data"], label: "No data" },
+              ]}
+            />
           )}
         </ChartCard>
       </div>
@@ -491,9 +481,6 @@ function Filters({
   years,
   year,
   setYear,
-  countries,
-  trendCountries,
-  setTrendCountries,
   sortDir,
   setSortDir,
   topN,
@@ -503,120 +490,40 @@ function Filters({
   years: number[];
   year: number;
   setYear: (y: number) => void;
-  countries: string[];
-  trendCountries: string[];
-  setTrendCountries: (c: string[]) => void;
   sortDir: SortDir;
   setSortDir: (d: SortDir) => void;
   topN: TopN;
   setTopN: (n: TopN) => void;
   onReset: () => void;
 }) {
-  const toggleCountry = (c: string) => {
-    setTrendCountries(
-      trendCountries.includes(c)
-        ? trendCountries.filter((x) => x !== c)
-        : [...trendCountries, c],
-    );
-  };
-
   return (
     <div className="rounded-xl border border-border bg-card p-4 shadow-sm">
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-3 items-end">
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3 items-end">
         <div>
-          <Label className="text-xs uppercase tracking-wider text-muted-foreground mb-1.5 block">
-            Year
-          </Label>
+          <Label className="text-xs uppercase tracking-wider text-muted-foreground mb-1.5 block">Year</Label>
           <Select value={String(year)} onValueChange={(v) => setYear(Number(v))}>
-            <SelectTrigger>
-              <SelectValue />
-            </SelectTrigger>
+            <SelectTrigger><SelectValue /></SelectTrigger>
             <SelectContent>
               {[...years].reverse().map((y) => (
-                <SelectItem key={y} value={String(y)}>
-                  {y}
-                </SelectItem>
+                <SelectItem key={y} value={String(y)}>{y}</SelectItem>
               ))}
             </SelectContent>
           </Select>
         </div>
-
-        <div className="lg:col-span-2">
-          <Label className="text-xs uppercase tracking-wider text-muted-foreground mb-1.5 block">
-            Countries (trend chart)
-          </Label>
-          <Popover>
-            <PopoverTrigger asChild>
-              <Button
-                variant="outline"
-                className="w-full justify-start font-normal h-9 text-left"
-              >
-                {trendCountries.length === 0
-                  ? "Select countries…"
-                  : `${trendCountries.length} selected`}
-              </Button>
-            </PopoverTrigger>
-            <PopoverContent className="w-72 p-0" align="start">
-              <div className="max-h-72 overflow-auto p-2">
-                {countries.map((c) => {
-                  const checked = trendCountries.includes(c);
-                  return (
-                    <label
-                      key={c}
-                      className="flex items-center gap-2 px-2 py-1.5 rounded hover:bg-accent/10 cursor-pointer text-sm"
-                    >
-                      <Checkbox checked={checked} onCheckedChange={() => toggleCountry(c)} />
-                      {c}
-                    </label>
-                  );
-                })}
-              </div>
-            </PopoverContent>
-          </Popover>
-          {trendCountries.length > 0 && (
-            <div className="flex flex-wrap gap-1 mt-2">
-              {trendCountries.map((c) => (
-                <span
-                  key={c}
-                  className="inline-flex items-center gap-1 text-xs px-2 py-0.5 rounded-full bg-[var(--elms-plum)]/10 text-[var(--elms-plum)]"
-                >
-                  {c}
-                  <button
-                    type="button"
-                    onClick={() => toggleCountry(c)}
-                    className="hover:opacity-70"
-                  >
-                    <X className="size-3" />
-                  </button>
-                </span>
-              ))}
-            </div>
-          )}
-        </div>
-
         <div>
-          <Label className="text-xs uppercase tracking-wider text-muted-foreground mb-1.5 block">
-            Sort by
-          </Label>
+          <Label className="text-xs uppercase tracking-wider text-muted-foreground mb-1.5 block">Sort by</Label>
           <Select value={sortDir} onValueChange={(v) => setSortDir(v as SortDir)}>
-            <SelectTrigger>
-              <SelectValue />
-            </SelectTrigger>
+            <SelectTrigger><SelectValue /></SelectTrigger>
             <SelectContent>
               <SelectItem value="desc">High to Low</SelectItem>
               <SelectItem value="asc">Low to High</SelectItem>
             </SelectContent>
           </Select>
         </div>
-
         <div>
-          <Label className="text-xs uppercase tracking-wider text-muted-foreground mb-1.5 block">
-            Show Top N
-          </Label>
+          <Label className="text-xs uppercase tracking-wider text-muted-foreground mb-1.5 block">Show Top N</Label>
           <Select value={String(topN)} onValueChange={(v) => setTopN(Number(v) as TopN)}>
-            <SelectTrigger>
-              <SelectValue />
-            </SelectTrigger>
+            <SelectTrigger><SelectValue /></SelectTrigger>
             <SelectContent>
               <SelectItem value="10">Top 10</SelectItem>
               <SelectItem value="15">Top 15</SelectItem>
@@ -626,7 +533,6 @@ function Filters({
           </Select>
         </div>
       </div>
-
       <div className="flex justify-end mt-3">
         <Button variant="ghost" size="sm" onClick={onReset} className="text-xs">
           <RotateCcw className="size-3.5" /> Reset filters
@@ -635,3 +541,4 @@ function Filters({
     </div>
   );
 }
+
