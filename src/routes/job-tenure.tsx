@@ -316,7 +316,6 @@ function Dashboard({ rows }: { rows: JtRow[] }) {
   return (
     <DashboardLayout>
       <PageHeader
-        eyebrow="Dataset · clean_job_tenure.csv"
         title="Employed Persons by Job Tenure"
         description="Explore how long employed people have stayed with their current employer across European countries, by year, sex, and job tenure group."
       />
@@ -344,9 +343,6 @@ function Dashboard({ rows }: { rows: JtRow[] }) {
         years={allYears}
         year={year}
         setYear={setYear}
-        countries={allCountries}
-        trendCountries={trendCountries}
-        setTrendCountries={setTrendCountries}
         sex={sex}
         setSex={setSex}
         focusDuration={focusDuration}
