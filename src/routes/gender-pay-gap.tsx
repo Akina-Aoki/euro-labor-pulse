@@ -207,9 +207,6 @@ function Dashboard({ rows }: { rows: GpgRow[] }) {
         years={years}
         year={year}
         setYear={setYear}
-        countries={countries}
-        trendCountries={trendCountries}
-        setTrendCountries={setTrendCountries}
         sortDir={sortDir}
         setSortDir={setSortDir}
         topN={topN}
