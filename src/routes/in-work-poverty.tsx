@@ -688,5 +688,3 @@ function Filters(props: {
   );
 }
 
-// silence unused
-void UsersRound;
