@@ -336,6 +336,12 @@ function Dashboard({ rows }: { rows: EmpRow[] }) {
           title={`Employment Rate Over Time (${allYears[0] ?? ""}–${allYears[allYears.length - 1] ?? ""}, ${sLabel})`}
           description="Percentage of people aged 20 to 64 who are employed"
         >
+          <TrendCountryPicker
+            countries={allCountries}
+            selected={trendCountries}
+            onChange={setTrendCountries}
+            helperText="Choose countries to compare in the trend chart. This selection only affects the line chart."
+          />
           {trendCountries.length === 0 ? (
             <EmptyState message="No trend data is available for the selected countries." />
           ) : (
