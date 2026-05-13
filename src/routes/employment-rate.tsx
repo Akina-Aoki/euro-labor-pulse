@@ -21,7 +21,6 @@ import {
   TrendingUp,
   UsersRound,
   Users,
-  X,
 } from "lucide-react";
 
 import { DashboardLayout } from "@/components/layout/DashboardLayout";
@@ -29,6 +28,8 @@ import { PageHeader } from "@/components/dashboard/PageHeader";
 import { ChartCard } from "@/components/dashboard/ChartCard";
 import { EmptyState } from "@/components/dashboard/EmptyState";
 import { SourceNote } from "@/components/dashboard/SourceNote";
+import { EuropeTileMap } from "@/components/dashboard/EuropeTileMap";
+import { TrendCountryPicker } from "@/components/dashboard/TrendCountryPicker";
 import {
   Select,
   SelectContent,
@@ -36,8 +37,6 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
-import { Checkbox } from "@/components/ui/checkbox";
 import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
 import {
