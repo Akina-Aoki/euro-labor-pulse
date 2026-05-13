@@ -186,7 +186,6 @@ function Dashboard({ rows }: { rows: GpgRow[] }) {
   return (
     <DashboardLayout>
       <PageHeader
-        eyebrow="Dataset · clean_gender_pay_gap.csv"
         title="Gender Pay Gap"
         description="Explore how the unadjusted gender pay gap differs across European countries and how it has changed over time."
       />
