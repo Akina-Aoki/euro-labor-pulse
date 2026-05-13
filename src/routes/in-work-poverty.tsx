@@ -236,7 +236,6 @@ function Dashboard({ rows }: { rows: IwpRow[] }) {
   return (
     <DashboardLayout>
       <PageHeader
-        eyebrow="Dataset · clean_in_work_poverty.csv"
         title="In-Work At-Risk-of-Poverty Rate by Sex"
         description="Explore how many employed people are still at risk of poverty across European countries, by year and sex."
       />
@@ -260,9 +259,6 @@ function Dashboard({ rows }: { rows: IwpRow[] }) {
         years={allYears}
         year={year}
         setYear={setYear}
-        countries={allCountries}
-        trendCountries={trendCountries}
-        setTrendCountries={setTrendCountries}
         sex={sex}
         setSex={setSex}
         sortDir={sortDir}
