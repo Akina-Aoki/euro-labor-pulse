@@ -354,6 +354,12 @@ function Dashboard({ rows }: { rows: MwhRow[] }) {
           title={`Weekly Hours Over Time (${allYears[0] ?? ""}–${allYears[allYears.length - 1] ?? ""}, ${sLabel})`}
           description={`Trend for ${trendCountries.length} selected ${trendCountries.length === 1 ? "country" : "countries"}`}
         >
+          <TrendCountryPicker
+            countries={allCountries}
+            selected={trendCountries}
+            onChange={setTrendCountries}
+            helperText="Choose countries to compare in the trend chart. This selection only affects the line chart."
+          />
           {trendCountries.length === 0 ? (
             <EmptyState message="No trend data is available for the selected countries." />
           ) : (
