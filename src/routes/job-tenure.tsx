@@ -114,7 +114,6 @@ function JobTenurePage() {
     return (
       <DashboardLayout>
         <PageHeader
-          eyebrow="Dataset · clean_job_tenure.csv"
           title="Employed Persons by Job Tenure"
           description="Loading data…"
         />
