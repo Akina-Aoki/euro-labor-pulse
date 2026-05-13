@@ -249,7 +249,6 @@ function Dashboard({ rows }: { rows: MwhRow[] }) {
   return (
     <DashboardLayout>
       <PageHeader
-        eyebrow="Dataset · clean_mean_weekly_hours.csv"
         title="Mean Weekly Hours Worked per Employee by Sex"
         description="Explore how average weekly working hours differ across countries, between women and men, and over time."
       />
@@ -276,9 +275,6 @@ function Dashboard({ rows }: { rows: MwhRow[] }) {
         years={allYears}
         year={year}
         setYear={setYear}
-        countries={allCountries}
-        trendCountries={trendCountries}
-        setTrendCountries={setTrendCountries}
         sex={sex}
         setSex={setSex}
         sortDir={sortDir}
