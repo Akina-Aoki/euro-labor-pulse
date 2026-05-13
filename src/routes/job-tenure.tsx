@@ -421,6 +421,12 @@ function Dashboard({ rows }: { rows: JtRow[] }) {
           title={`Job Tenure Over Time (${SHORT_DUR_LABEL[focusDuration]}) | ${sLabel}`}
           description={`Trend ${allYears[0] ?? ""}–${allYears[allYears.length - 1] ?? ""} for selected countries.`}
         >
+          <TrendCountryPicker
+            countries={allCountries}
+            selected={trendCountries}
+            onChange={setTrendCountries}
+            helperText="Choose countries to compare in the trend chart. This selection only affects the line chart."
+          />
           {trendCountries.length === 0 ? (
             <EmptyState message="No trend data available." />
           ) : (
