@@ -12,9 +12,6 @@
 
 </div>
 
----
-
-## 🌍 Live Demo
 
 <div align="center">
 
@@ -24,7 +21,8 @@
 
 </div>
 
----
+
+<br/>
 
 ## 🌷 About the Project
 
@@ -36,7 +34,8 @@ Instead of looking at large tables, users can use the dashboard to compare count
 
 The goal of this project is to make European labour market data easier to explore, understand, and explain.
 
----
+
+<br/>
 
 ## 💫 What the Dashboard Includes
 
@@ -57,7 +56,8 @@ Shows the difference between men’s and women’s average earnings.
 ### 🌸 In-Work At-Risk-of-Poverty Rate by Sex  
 Shows how many employed people are still at risk of poverty.
 
----
+
+<br/>
 
 ## ✨ Features
 
@@ -69,7 +69,8 @@ Shows how many employed people are still at risk of poverty.
 - Clean and simple dashboard design  
 - Short explanations for each dataset  
 
----
+
+<br/>
 
 ## 📊 Data
 
@@ -83,7 +84,8 @@ The datasets cover:
 - gender pay gap  
 - in-work poverty risk  
 
----
+
+<br/>
 
 ## 🛠️ Tools Used
 
@@ -94,7 +96,8 @@ This version of the app was built with:
 - Interactive dashboard components  
 - Charts and map visualizations  
 
----
+
+<br/>
 
 ## 💭 Why I Made This
 
@@ -102,14 +105,14 @@ I wanted to create a dashboard that makes labour market data easier to understan
 
 This project helps users see differences between countries, compare women and men, and understand how labour market indicators change over time.
 
----
+
+<br/>
 
 ## 📝 Disclaimer
 
 This project was created for learning and educational purposes.  
 The data is based on official Eurostat and ILO sources, but the dashboard itself is a student project.
 
----
 
 <div align="center">
 
