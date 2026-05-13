@@ -167,7 +167,7 @@ function Dashboard({ rows }: { rows: IwpRow[] }) {
           country: r.country,
           female: r.female!,
           male: r.male!,
-          gap: r.male! - r.female!,
+          gap: r.female! - r.male!,
         })),
     [bySexAll, year],
   );
