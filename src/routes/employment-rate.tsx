@@ -66,6 +66,24 @@ export const Route = createFileRoute("/employment-rate")({
 });
 
 const TREND_COLORS = ["#5F3475", "#213885", "#C9347B", "#E58A2B", "#3FA796", "#1E6091", "#A14D8E"];
+
+// Map color scale: higher employment = darker green
+function empRateColor(v: number | null | undefined): string {
+  if (v == null) return "#E5E7EB";
+  if (v >= 80) return "#1B5E3F";
+  if (v >= 75) return "#2F8A5C";
+  if (v >= 70) return "#5BB089";
+  if (v >= 65) return "#9AD2B6";
+  return "#D9EBDF";
+}
+const EMP_LEGEND = [
+  { color: "#D9EBDF", label: "< 65%" },
+  { color: "#9AD2B6", label: "65–70%" },
+  { color: "#5BB089", label: "70–75%" },
+  { color: "#2F8A5C", label: "75–80%" },
+  { color: "#1B5E3F", label: "≥ 80%" },
+  { color: "#E5E7EB", label: "No data" },
+];
 type SortDir = "desc" | "asc";
 type TopN = 10 | 15 | 20 | 0;
 type Coverage = "europe" | "all";
