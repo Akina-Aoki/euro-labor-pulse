@@ -294,6 +294,12 @@ function Dashboard({ rows }: { rows: GpgRow[] }) {
           title="Gender Pay Gap Over Time"
           description={`Trend for ${trendCountries.length} selected ${trendCountries.length === 1 ? "country" : "countries"}`}
         >
+          <TrendCountryPicker
+            countries={countries}
+            selected={trendCountries}
+            onChange={setTrendCountries}
+            helperText="Choose countries to compare in the trend chart. This selection only affects the line chart."
+          />
           {trendCountries.length === 0 ? (
             <EmptyState message="No trend data is available for the selected countries." />
           ) : (
