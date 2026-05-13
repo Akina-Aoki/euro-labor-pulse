@@ -312,30 +312,23 @@ function Dashboard({ rows }: { rows: EmpRow[] }) {
       {/* Charts row 1 */}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-5 mt-6">
         <ChartCard
-          title={`Employment Rate by Country (${year}, ${sLabel})`}
-          description="Percentage of people aged 20 to 64 who are employed"
+          title={`Employment Rate in Europe (${year}, ${sLabel})`}
+          description="Choropleth tile-grid map. Hover a country for its employment rate."
         >
-          {ranking.length === 0 ? (
+          {yearAgg.length === 0 ? (
             <EmptyState message="No employment data is available for the selected filters." />
           ) : (
-            <ResponsiveContainer width="100%" height={Math.max(280, ranking.length * 26)}>
-              <BarChart data={ranking} layout="vertical" margin={{ top: 8, right: 48, left: 8, bottom: 24 }}>
-                <CartesianGrid horizontal={false} stroke="rgba(33,56,133,0.1)" />
-                <XAxis
-                  type="number"
-                  tick={{ fontSize: 11, fill: "#4a4b6b" }}
-                  domain={[0, 100]}
-                  label={{ value: "Employment Rate (%)", position: "insideBottom", offset: -2, fontSize: 11, fill: "#4a4b6b" }}
-                />
-                <YAxis type="category" dataKey="country" width={140} tick={{ fontSize: 11, fill: "#070836" }} />
-                <Tooltip
-                  cursor={{ fill: "rgba(95,52,117,0.06)" }}
-                  formatter={(v: number) => [`${v.toFixed(1)}%`, "Employment rate"]}
-                  contentStyle={{ borderRadius: 8, border: "1px solid rgba(33,56,133,0.18)" }}
-                />
-                <Bar dataKey="value" fill="#5F3475" radius={[0, 4, 4, 0]} />
-              </BarChart>
-            </ResponsiveContainer>
+            <EuropeTileMap
+              height={360}
+              data={yearAgg.map((r) => ({ country: r.country, value: r.value }))}
+              colorFor={empRateColor}
+              tooltipLines={({ country, value }) =>
+                value == null
+                  ? [country, "No data"]
+                  : [country, `Employment rate: ${value.toFixed(1)}%`]
+              }
+              legend={EMP_LEGEND}
+            />
           )}
         </ChartCard>
 
