@@ -91,7 +91,6 @@ function GenderPayGapPage() {
     return (
       <DashboardLayout>
         <PageHeader
-          eyebrow="Dataset · clean_gender_pay_gap.csv"
           title="Gender Pay Gap"
           description="Loading data…"
         />
