@@ -1,7 +1,3 @@
-<div align="center">
-
-<img src="./european_labour_market_data_dashboard_design.png" alt="ELMS Dashboard Banner" width="750"/>
-
 # 💜 ELMS — European Labour Market Statistics 🌸
 
 **A simple and friendly dashboard app for exploring labour market data across Europe.**
