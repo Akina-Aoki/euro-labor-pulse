@@ -240,7 +240,6 @@ function Dashboard({ rows }: { rows: EmpRow[] }) {
   return (
     <DashboardLayout>
       <PageHeader
-        eyebrow="Dataset · clean_employment_rate.csv"
         title="Employment Rate by Sex"
         description="Explore how employment participation across European countries differs by sex."
       />
@@ -267,9 +266,6 @@ function Dashboard({ rows }: { rows: EmpRow[] }) {
         years={allYears}
         year={year}
         setYear={setYear}
-        countries={allCountries}
-        trendCountries={trendCountries}
-        setTrendCountries={setTrendCountries}
         sex={sex}
         setSex={setSex}
         sortDir={sortDir}
