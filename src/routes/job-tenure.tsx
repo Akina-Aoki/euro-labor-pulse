@@ -28,7 +28,7 @@ import { PageHeader } from "@/components/dashboard/PageHeader";
 import { ChartCard } from "@/components/dashboard/ChartCard";
 import { EmptyState } from "@/components/dashboard/EmptyState";
 import { SourceNote } from "@/components/dashboard/SourceNote";
-import { EuropeTileMap } from "@/components/dashboard/EuropeTileMap";
+
 import { TrendCountryPicker } from "@/components/dashboard/TrendCountryPicker";
 import {
   Select,
@@ -672,9 +672,6 @@ function Filters(props: {
   years: number[];
   year: number;
   setYear: (y: number) => void;
-  countries: string[];
-  trendCountries: string[];
-  setTrendCountries: (c: string[]) => void;
   sex: SexFilter;
   setSex: (s: SexFilter) => void;
   focusDuration: Duration;
@@ -688,16 +685,11 @@ function Filters(props: {
   onReset: () => void;
 }) {
   const {
-    years, year, setYear, countries, trendCountries, setTrendCountries,
+    years, year, setYear,
     sex, setSex, focusDuration, setFocusDuration,
     sortDir, setSortDir, topN, setTopN, coverage, setCoverage, onReset,
   } = props;
 
-  const toggleCountry = (c: string) => {
-    setTrendCountries(
-      trendCountries.includes(c) ? trendCountries.filter((x) => x !== c) : [...trendCountries, c],
-    );
-  };
 
   return (
     <div className="rounded-xl border border-border bg-card p-4 shadow-sm">
@@ -712,44 +704,6 @@ function Filters(props: {
               ))}
             </SelectContent>
           </Select>
-        </div>
-
-        <div className="lg:col-span-2">
-          <Label className="text-xs uppercase tracking-wider text-muted-foreground mb-1.5 block">
-            Countries (trend chart)
-          </Label>
-          <Popover>
-            <PopoverTrigger asChild>
-              <Button variant="outline" className="w-full justify-start font-normal h-9 text-left">
-                {trendCountries.length === 0 ? "Select countries…" : `${trendCountries.length} selected`}
-              </Button>
-            </PopoverTrigger>
-            <PopoverContent className="w-72 p-0" align="start">
-              <div className="max-h-72 overflow-auto p-2">
-                {countries.map((c) => (
-                  <label key={c} className="flex items-center gap-2 px-2 py-1.5 rounded hover:bg-accent/10 cursor-pointer text-sm">
-                    <Checkbox
-                      checked={trendCountries.includes(c)}
-                      onCheckedChange={() => toggleCountry(c)}
-                    />
-                    {c}
-                  </label>
-                ))}
-              </div>
-            </PopoverContent>
-          </Popover>
-          {trendCountries.length > 0 && (
-            <div className="flex flex-wrap gap-1 mt-2">
-              {trendCountries.map((c) => (
-                <span key={c} className="inline-flex items-center gap-1 text-xs px-2 py-0.5 rounded-full bg-[var(--elms-plum)]/10 text-[var(--elms-plum)]">
-                  {c}
-                  <button type="button" onClick={() => toggleCountry(c)} className="hover:opacity-70">
-                    <X className="size-3" />
-                  </button>
-                </span>
-              ))}
-            </div>
-          )}
         </div>
 
         <div>
