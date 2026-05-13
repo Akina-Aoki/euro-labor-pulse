@@ -672,9 +672,6 @@ function Filters(props: {
   years: number[];
   year: number;
   setYear: (y: number) => void;
-  countries: string[];
-  trendCountries: string[];
-  setTrendCountries: (c: string[]) => void;
   sex: SexFilter;
   setSex: (s: SexFilter) => void;
   focusDuration: Duration;
@@ -688,7 +685,7 @@ function Filters(props: {
   onReset: () => void;
 }) {
   const {
-    years, year, setYear, countries, trendCountries, setTrendCountries,
+    years, year, setYear,
     sex, setSex, focusDuration, setFocusDuration,
     sortDir, setSortDir, topN, setTopN, coverage, setCoverage, onReset,
   } = props;
