@@ -21,7 +21,6 @@ import {
   TrendingDown,
   TrendingUp,
   UsersRound,
-  X,
 } from "lucide-react";
 
 import { DashboardLayout } from "@/components/layout/DashboardLayout";
@@ -29,6 +28,7 @@ import { PageHeader } from "@/components/dashboard/PageHeader";
 import { ChartCard } from "@/components/dashboard/ChartCard";
 import { EmptyState } from "@/components/dashboard/EmptyState";
 import { SourceNote } from "@/components/dashboard/SourceNote";
+import { TrendCountryPicker } from "@/components/dashboard/TrendCountryPicker";
 import {
   Select,
   SelectContent,
@@ -36,8 +36,6 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
-import { Checkbox } from "@/components/ui/checkbox";
 import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
 import {
@@ -91,7 +89,6 @@ function WeeklyHoursPage() {
     return (
       <DashboardLayout>
         <PageHeader
-          eyebrow="Dataset · clean_mean_weekly_hours.csv"
           title="Mean Weekly Hours Worked per Employee by Sex"
           description="Loading data…"
         />
@@ -252,7 +249,6 @@ function Dashboard({ rows }: { rows: MwhRow[] }) {
   return (
     <DashboardLayout>
       <PageHeader
-        eyebrow="Dataset · clean_mean_weekly_hours.csv"
         title="Mean Weekly Hours Worked per Employee by Sex"
         description="Explore how average weekly working hours differ across countries, between women and men, and over time."
       />
@@ -279,9 +275,6 @@ function Dashboard({ rows }: { rows: MwhRow[] }) {
         years={allYears}
         year={year}
         setYear={setYear}
-        countries={allCountries}
-        trendCountries={trendCountries}
-        setTrendCountries={setTrendCountries}
         sex={sex}
         setSex={setSex}
         sortDir={sortDir}
@@ -361,6 +354,12 @@ function Dashboard({ rows }: { rows: MwhRow[] }) {
           title={`Weekly Hours Over Time (${allYears[0] ?? ""}–${allYears[allYears.length - 1] ?? ""}, ${sLabel})`}
           description={`Trend for ${trendCountries.length} selected ${trendCountries.length === 1 ? "country" : "countries"}`}
         >
+          <TrendCountryPicker
+            countries={allCountries}
+            selected={trendCountries}
+            onChange={setTrendCountries}
+            helperText="Choose countries to compare in the trend chart. This selection only affects the line chart."
+          />
           {trendCountries.length === 0 ? (
             <EmptyState message="No trend data is available for the selected countries." />
           ) : (
@@ -574,9 +573,6 @@ function Filters(props: {
   years: number[];
   year: number;
   setYear: (y: number) => void;
-  countries: string[];
-  trendCountries: string[];
-  setTrendCountries: (c: string[]) => void;
   sex: SexFilter;
   setSex: (s: SexFilter) => void;
   sortDir: SortDir;
@@ -591,20 +587,14 @@ function Filters(props: {
   onReset: () => void;
 }) {
   const {
-    years, year, setYear, countries, trendCountries, setTrendCountries,
+    years, year, setYear,
     sex, setSex, sortDir, setSortDir, topN, setTopN,
     coverage, setCoverage, sources, source, setSource, onReset,
   } = props;
 
-  const toggleCountry = (c: string) => {
-    setTrendCountries(
-      trendCountries.includes(c) ? trendCountries.filter((x) => x !== c) : [...trendCountries, c],
-    );
-  };
-
   return (
     <div className="rounded-xl border border-border bg-card p-4 shadow-sm">
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 xl:grid-cols-6 gap-3 items-end">
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-6 gap-3 items-end">
         <div>
           <Label className="text-xs uppercase tracking-wider text-muted-foreground mb-1.5 block">Year</Label>
           <Select value={String(year)} onValueChange={(v) => setYear(Number(v))}>
@@ -615,44 +605,6 @@ function Filters(props: {
               ))}
             </SelectContent>
           </Select>
-        </div>
-
-        <div className="lg:col-span-2">
-          <Label className="text-xs uppercase tracking-wider text-muted-foreground mb-1.5 block">
-            Countries (trend chart)
-          </Label>
-          <Popover>
-            <PopoverTrigger asChild>
-              <Button variant="outline" className="w-full justify-start font-normal h-9 text-left">
-                {trendCountries.length === 0 ? "Select countries…" : `${trendCountries.length} selected`}
-              </Button>
-            </PopoverTrigger>
-            <PopoverContent className="w-72 p-0" align="start">
-              <div className="max-h-72 overflow-auto p-2">
-                {countries.map((c) => (
-                  <label key={c} className="flex items-center gap-2 px-2 py-1.5 rounded hover:bg-accent/10 cursor-pointer text-sm">
-                    <Checkbox
-                      checked={trendCountries.includes(c)}
-                      onCheckedChange={() => toggleCountry(c)}
-                    />
-                    {c}
-                  </label>
-                ))}
-              </div>
-            </PopoverContent>
-          </Popover>
-          {trendCountries.length > 0 && (
-            <div className="flex flex-wrap gap-1 mt-2">
-              {trendCountries.map((c) => (
-                <span key={c} className="inline-flex items-center gap-1 text-xs px-2 py-0.5 rounded-full bg-[var(--elms-plum)]/10 text-[var(--elms-plum)]">
-                  {c}
-                  <button type="button" onClick={() => toggleCountry(c)} className="hover:opacity-70">
-                    <X className="size-3" />
-                  </button>
-                </span>
-              ))}
-            </div>
-          )}
         </div>
 
         <div>

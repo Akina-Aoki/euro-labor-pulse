@@ -21,7 +21,6 @@ import {
   TrendingUp,
   UsersRound,
   Users,
-  X,
 } from "lucide-react";
 
 import { DashboardLayout } from "@/components/layout/DashboardLayout";
@@ -29,6 +28,8 @@ import { PageHeader } from "@/components/dashboard/PageHeader";
 import { ChartCard } from "@/components/dashboard/ChartCard";
 import { EmptyState } from "@/components/dashboard/EmptyState";
 import { SourceNote } from "@/components/dashboard/SourceNote";
+import { EuropeTileMap } from "@/components/dashboard/EuropeTileMap";
+import { TrendCountryPicker } from "@/components/dashboard/TrendCountryPicker";
 import {
   Select,
   SelectContent,
@@ -36,8 +37,6 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
-import { Checkbox } from "@/components/ui/checkbox";
 import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
 import {
@@ -67,6 +66,24 @@ export const Route = createFileRoute("/employment-rate")({
 });
 
 const TREND_COLORS = ["#5F3475", "#213885", "#C9347B", "#E58A2B", "#3FA796", "#1E6091", "#A14D8E"];
+
+// Map color scale: higher employment = darker green
+function empRateColor(v: number | null | undefined): string {
+  if (v == null) return "#E5E7EB";
+  if (v >= 80) return "#1B5E3F";
+  if (v >= 75) return "#2F8A5C";
+  if (v >= 70) return "#5BB089";
+  if (v >= 65) return "#9AD2B6";
+  return "#D9EBDF";
+}
+const EMP_LEGEND = [
+  { color: "#D9EBDF", label: "< 65%" },
+  { color: "#9AD2B6", label: "65–70%" },
+  { color: "#5BB089", label: "70–75%" },
+  { color: "#2F8A5C", label: "75–80%" },
+  { color: "#1B5E3F", label: "≥ 80%" },
+  { color: "#E5E7EB", label: "No data" },
+];
 type SortDir = "desc" | "asc";
 type TopN = 10 | 15 | 20 | 0;
 type Coverage = "europe" | "all";
@@ -91,7 +108,6 @@ function EmploymentRatePage() {
     return (
       <DashboardLayout>
         <PageHeader
-          eyebrow="Dataset · clean_employment_rate.csv"
           title="Employment Rate by Sex"
           description="Loading data…"
         />
@@ -242,7 +258,6 @@ function Dashboard({ rows }: { rows: EmpRow[] }) {
   return (
     <DashboardLayout>
       <PageHeader
-        eyebrow="Dataset · clean_employment_rate.csv"
         title="Employment Rate by Sex"
         description="Explore how employment participation across European countries differs by sex."
       />
@@ -269,9 +284,6 @@ function Dashboard({ rows }: { rows: EmpRow[] }) {
         years={allYears}
         year={year}
         setYear={setYear}
-        countries={allCountries}
-        trendCountries={trendCountries}
-        setTrendCountries={setTrendCountries}
         sex={sex}
         setSex={setSex}
         sortDir={sortDir}
@@ -318,30 +330,23 @@ function Dashboard({ rows }: { rows: EmpRow[] }) {
       {/* Charts row 1 */}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-5 mt-6">
         <ChartCard
-          title={`Employment Rate by Country (${year}, ${sLabel})`}
-          description="Percentage of people aged 20 to 64 who are employed"
+          title={`Employment Rate in Europe (${year}, ${sLabel})`}
+          description="Choropleth tile-grid map. Hover a country for its employment rate."
         >
-          {ranking.length === 0 ? (
+          {yearAgg.length === 0 ? (
             <EmptyState message="No employment data is available for the selected filters." />
           ) : (
-            <ResponsiveContainer width="100%" height={Math.max(280, ranking.length * 26)}>
-              <BarChart data={ranking} layout="vertical" margin={{ top: 8, right: 48, left: 8, bottom: 24 }}>
-                <CartesianGrid horizontal={false} stroke="rgba(33,56,133,0.1)" />
-                <XAxis
-                  type="number"
-                  tick={{ fontSize: 11, fill: "#4a4b6b" }}
-                  domain={[0, 100]}
-                  label={{ value: "Employment Rate (%)", position: "insideBottom", offset: -2, fontSize: 11, fill: "#4a4b6b" }}
-                />
-                <YAxis type="category" dataKey="country" width={140} tick={{ fontSize: 11, fill: "#070836" }} />
-                <Tooltip
-                  cursor={{ fill: "rgba(95,52,117,0.06)" }}
-                  formatter={(v: number) => [`${v.toFixed(1)}%`, "Employment rate"]}
-                  contentStyle={{ borderRadius: 8, border: "1px solid rgba(33,56,133,0.18)" }}
-                />
-                <Bar dataKey="value" fill="#5F3475" radius={[0, 4, 4, 0]} />
-              </BarChart>
-            </ResponsiveContainer>
+            <EuropeTileMap
+              height={360}
+              data={yearAgg.map((r) => ({ country: r.country, value: r.value }))}
+              colorFor={empRateColor}
+              tooltipLines={({ country, value }) =>
+                value == null
+                  ? [country, "No data"]
+                  : [country, `Employment rate: ${value.toFixed(1)}%`]
+              }
+              legend={EMP_LEGEND}
+            />
           )}
         </ChartCard>
 
@@ -349,6 +354,12 @@ function Dashboard({ rows }: { rows: EmpRow[] }) {
           title={`Employment Rate Over Time (${allYears[0] ?? ""}–${allYears[allYears.length - 1] ?? ""}, ${sLabel})`}
           description="Percentage of people aged 20 to 64 who are employed"
         >
+          <TrendCountryPicker
+            countries={allCountries}
+            selected={trendCountries}
+            onChange={setTrendCountries}
+            helperText="Choose countries to compare in the trend chart. This selection only affects the line chart."
+          />
           {trendCountries.length === 0 ? (
             <EmptyState message="No trend data is available for the selected countries." />
           ) : (
@@ -562,9 +573,6 @@ function Filters(props: {
   years: number[];
   year: number;
   setYear: (y: number) => void;
-  countries: string[];
-  trendCountries: string[];
-  setTrendCountries: (c: string[]) => void;
   sex: SexFilter;
   setSex: (s: SexFilter) => void;
   sortDir: SortDir;
@@ -576,20 +584,14 @@ function Filters(props: {
   onReset: () => void;
 }) {
   const {
-    years, year, setYear, countries, trendCountries, setTrendCountries,
+    years, year, setYear,
     sex, setSex, sortDir, setSortDir, topN, setTopN,
     coverage, setCoverage, onReset,
   } = props;
 
-  const toggleCountry = (c: string) => {
-    setTrendCountries(
-      trendCountries.includes(c) ? trendCountries.filter((x) => x !== c) : [...trendCountries, c],
-    );
-  };
-
   return (
     <div className="rounded-xl border border-border bg-card p-4 shadow-sm">
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 xl:grid-cols-6 gap-3 items-end">
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5 gap-3 items-end">
         <div>
           <Label className="text-xs uppercase tracking-wider text-muted-foreground mb-1.5 block">Year</Label>
           <Select value={String(year)} onValueChange={(v) => setYear(Number(v))}>
@@ -600,44 +602,6 @@ function Filters(props: {
               ))}
             </SelectContent>
           </Select>
-        </div>
-
-        <div className="lg:col-span-2">
-          <Label className="text-xs uppercase tracking-wider text-muted-foreground mb-1.5 block">
-            Countries (trend chart)
-          </Label>
-          <Popover>
-            <PopoverTrigger asChild>
-              <Button variant="outline" className="w-full justify-start font-normal h-9 text-left">
-                {trendCountries.length === 0 ? "Select countries…" : `${trendCountries.length} selected`}
-              </Button>
-            </PopoverTrigger>
-            <PopoverContent className="w-72 p-0" align="start">
-              <div className="max-h-72 overflow-auto p-2">
-                {countries.map((c) => (
-                  <label key={c} className="flex items-center gap-2 px-2 py-1.5 rounded hover:bg-accent/10 cursor-pointer text-sm">
-                    <Checkbox
-                      checked={trendCountries.includes(c)}
-                      onCheckedChange={() => toggleCountry(c)}
-                    />
-                    {c}
-                  </label>
-                ))}
-              </div>
-            </PopoverContent>
-          </Popover>
-          {trendCountries.length > 0 && (
-            <div className="flex flex-wrap gap-1 mt-2">
-              {trendCountries.map((c) => (
-                <span key={c} className="inline-flex items-center gap-1 text-xs px-2 py-0.5 rounded-full bg-[var(--elms-plum)]/10 text-[var(--elms-plum)]">
-                  {c}
-                  <button type="button" onClick={() => toggleCountry(c)} className="hover:opacity-70">
-                    <X className="size-3" />
-                  </button>
-                </span>
-              ))}
-            </div>
-          )}
         </div>
 
         <div>

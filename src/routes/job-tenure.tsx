@@ -20,7 +20,6 @@ import {
   RefreshCcw,
   TrendingUp,
   Users,
-  X,
   Shield,
 } from "lucide-react";
 
@@ -29,6 +28,8 @@ import { PageHeader } from "@/components/dashboard/PageHeader";
 import { ChartCard } from "@/components/dashboard/ChartCard";
 import { EmptyState } from "@/components/dashboard/EmptyState";
 import { SourceNote } from "@/components/dashboard/SourceNote";
+import { EuropeTileMap } from "@/components/dashboard/EuropeTileMap";
+import { TrendCountryPicker } from "@/components/dashboard/TrendCountryPicker";
 import {
   Select,
   SelectContent,
@@ -36,8 +37,6 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
-import { Checkbox } from "@/components/ui/checkbox";
 import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
 import {
@@ -115,7 +114,6 @@ function JobTenurePage() {
     return (
       <DashboardLayout>
         <PageHeader
-          eyebrow="Dataset · clean_job_tenure.csv"
           title="Employed Persons by Job Tenure"
           description="Loading data…"
         />
@@ -318,7 +316,6 @@ function Dashboard({ rows }: { rows: JtRow[] }) {
   return (
     <DashboardLayout>
       <PageHeader
-        eyebrow="Dataset · clean_job_tenure.csv"
         title="Employed Persons by Job Tenure"
         description="Explore how long employed people have stayed with their current employer across European countries, by year, sex, and job tenure group."
       />
@@ -346,9 +343,6 @@ function Dashboard({ rows }: { rows: JtRow[] }) {
         years={allYears}
         year={year}
         setYear={setYear}
-        countries={allCountries}
-        trendCountries={trendCountries}
-        setTrendCountries={setTrendCountries}
         sex={sex}
         setSex={setSex}
         focusDuration={focusDuration}
@@ -427,6 +421,12 @@ function Dashboard({ rows }: { rows: JtRow[] }) {
           title={`Job Tenure Over Time (${SHORT_DUR_LABEL[focusDuration]}) | ${sLabel}`}
           description={`Trend ${allYears[0] ?? ""}–${allYears[allYears.length - 1] ?? ""} for selected countries.`}
         >
+          <TrendCountryPicker
+            countries={allCountries}
+            selected={trendCountries}
+            onChange={setTrendCountries}
+            helperText="Choose countries to compare in the trend chart. This selection only affects the line chart."
+          />
           {trendCountries.length === 0 ? (
             <EmptyState message="No trend data available." />
           ) : (
