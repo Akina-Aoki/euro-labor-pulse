@@ -401,10 +401,10 @@ function Dashboard({ rows }: { rows: GpgRow[] }) {
                   ? [country, "No data"]
                   : [country, `Gender pay gap: ${value.toFixed(1)}%`, `Level: ${lvl}`];
               }}
-              legend={PAY_GAP_LEVEL_ORDER.map((l) => ({
-                color: PAY_GAP_LEVEL_COLORS[l],
-                label: l,
-              })).concat([{ color: PAY_GAP_LEVEL_COLORS["No data"], label: "No data" }])}
+              legend={[
+                ...PAY_GAP_LEVEL_ORDER.map((l) => ({ color: PAY_GAP_LEVEL_COLORS[l], label: l as string })),
+                { color: PAY_GAP_LEVEL_COLORS["No data"], label: "No data" },
+              ]}
             />
           )}
         </ChartCard>
