@@ -89,7 +89,6 @@ function WeeklyHoursPage() {
     return (
       <DashboardLayout>
         <PageHeader
-          eyebrow="Dataset · clean_mean_weekly_hours.csv"
           title="Mean Weekly Hours Worked per Employee by Sex"
           description="Loading data…"
         />
