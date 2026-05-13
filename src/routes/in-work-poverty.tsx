@@ -410,8 +410,8 @@ function Dashboard({ rows }: { rows: IwpRow[] }) {
         </ChartCard>
 
         <ChartCard
-          title={`Sex Gap in In-Work Poverty (${year}, Male − Female)`}
-          description="Percentage point gap. Positive = higher male in-work poverty rate."
+          title={`Sex Gap in In-Work Poverty (${year}, Female − Male)`}
+          description="Percentage point gap. Positive = higher female in-work poverty rate."
         >
           {sexGapData.length === 0 ? (
             <EmptyState message="No sex comparison available." />
@@ -422,11 +422,11 @@ function Dashboard({ rows }: { rows: IwpRow[] }) {
                 <XAxis
                   type="number"
                   tick={{ fontSize: 11, fill: "#4a4b6b" }}
-                  label={{ value: "Male minus Female (pp)", position: "insideBottom", offset: -2, fontSize: 11, fill: "#4a4b6b" }}
+                  label={{ value: "Female minus Male (pp)", position: "insideBottom", offset: -2, fontSize: 11, fill: "#4a4b6b" }}
                 />
                 <YAxis type="category" dataKey="country" width={140} tick={{ fontSize: 11, fill: "#070836" }} />
                 <Tooltip
-                  formatter={(v: number) => [`${v > 0 ? "+" : ""}${v.toFixed(1)} pp`, "Male − Female"]}
+                  formatter={(v: number) => [`${v > 0 ? "+" : ""}${v.toFixed(1)} pp`, "Female − Male"]}
                   contentStyle={{ borderRadius: 8, border: "1px solid rgba(33,56,133,0.18)" }}
                 />
                 <Bar dataKey="gap" radius={[0, 4, 4, 0]}>
