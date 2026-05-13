@@ -88,7 +88,6 @@ function InWorkPovertyPage() {
     return (
       <DashboardLayout>
         <PageHeader
-          eyebrow="Dataset · clean_in_work_poverty.csv"
           title="In-Work At-Risk-of-Poverty Rate by Sex"
           description="Loading data…"
         />
