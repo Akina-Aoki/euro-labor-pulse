@@ -28,7 +28,7 @@ import { PageHeader } from "@/components/dashboard/PageHeader";
 import { ChartCard } from "@/components/dashboard/ChartCard";
 import { EmptyState } from "@/components/dashboard/EmptyState";
 import { SourceNote } from "@/components/dashboard/SourceNote";
-import { EuropeTileMap } from "@/components/dashboard/EuropeTileMap";
+
 import { TrendCountryPicker } from "@/components/dashboard/TrendCountryPicker";
 import {
   Select,
