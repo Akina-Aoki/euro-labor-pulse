@@ -9,8 +9,38 @@
 // Additionally, you should also exclude this file from your linter and/or formatter to prevent it from being checked or modified.
 
 import { Route as rootRouteImport } from './routes/__root'
+import { Route as WeeklyHoursRouteImport } from './routes/weekly-hours'
+import { Route as JobTenureRouteImport } from './routes/job-tenure'
+import { Route as InWorkPovertyRouteImport } from './routes/in-work-poverty'
+import { Route as GenderPayGapRouteImport } from './routes/gender-pay-gap'
+import { Route as EmploymentRateRouteImport } from './routes/employment-rate'
 import { Route as IndexRouteImport } from './routes/index'
 
+const WeeklyHoursRoute = WeeklyHoursRouteImport.update({
+  id: '/weekly-hours',
+  path: '/weekly-hours',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const JobTenureRoute = JobTenureRouteImport.update({
+  id: '/job-tenure',
+  path: '/job-tenure',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const InWorkPovertyRoute = InWorkPovertyRouteImport.update({
+  id: '/in-work-poverty',
+  path: '/in-work-poverty',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const GenderPayGapRoute = GenderPayGapRouteImport.update({
+  id: '/gender-pay-gap',
+  path: '/gender-pay-gap',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const EmploymentRateRoute = EmploymentRateRouteImport.update({
+  id: '/employment-rate',
+  path: '/employment-rate',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const IndexRoute = IndexRouteImport.update({
   id: '/',
   path: '/',
@@ -19,28 +49,102 @@ const IndexRoute = IndexRouteImport.update({
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
+  '/employment-rate': typeof EmploymentRateRoute
+  '/gender-pay-gap': typeof GenderPayGapRoute
+  '/in-work-poverty': typeof InWorkPovertyRoute
+  '/job-tenure': typeof JobTenureRoute
+  '/weekly-hours': typeof WeeklyHoursRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
+  '/employment-rate': typeof EmploymentRateRoute
+  '/gender-pay-gap': typeof GenderPayGapRoute
+  '/in-work-poverty': typeof InWorkPovertyRoute
+  '/job-tenure': typeof JobTenureRoute
+  '/weekly-hours': typeof WeeklyHoursRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
+  '/employment-rate': typeof EmploymentRateRoute
+  '/gender-pay-gap': typeof GenderPayGapRoute
+  '/in-work-poverty': typeof InWorkPovertyRoute
+  '/job-tenure': typeof JobTenureRoute
+  '/weekly-hours': typeof WeeklyHoursRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/'
+  fullPaths:
+    | '/'
+    | '/employment-rate'
+    | '/gender-pay-gap'
+    | '/in-work-poverty'
+    | '/job-tenure'
+    | '/weekly-hours'
   fileRoutesByTo: FileRoutesByTo
-  to: '/'
-  id: '__root__' | '/'
+  to:
+    | '/'
+    | '/employment-rate'
+    | '/gender-pay-gap'
+    | '/in-work-poverty'
+    | '/job-tenure'
+    | '/weekly-hours'
+  id:
+    | '__root__'
+    | '/'
+    | '/employment-rate'
+    | '/gender-pay-gap'
+    | '/in-work-poverty'
+    | '/job-tenure'
+    | '/weekly-hours'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
+  EmploymentRateRoute: typeof EmploymentRateRoute
+  GenderPayGapRoute: typeof GenderPayGapRoute
+  InWorkPovertyRoute: typeof InWorkPovertyRoute
+  JobTenureRoute: typeof JobTenureRoute
+  WeeklyHoursRoute: typeof WeeklyHoursRoute
 }
 
 declare module '@tanstack/react-router' {
   interface FileRoutesByPath {
+    '/weekly-hours': {
+      id: '/weekly-hours'
+      path: '/weekly-hours'
+      fullPath: '/weekly-hours'
+      preLoaderRoute: typeof WeeklyHoursRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/job-tenure': {
+      id: '/job-tenure'
+      path: '/job-tenure'
+      fullPath: '/job-tenure'
+      preLoaderRoute: typeof JobTenureRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/in-work-poverty': {
+      id: '/in-work-poverty'
+      path: '/in-work-poverty'
+      fullPath: '/in-work-poverty'
+      preLoaderRoute: typeof InWorkPovertyRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/gender-pay-gap': {
+      id: '/gender-pay-gap'
+      path: '/gender-pay-gap'
+      fullPath: '/gender-pay-gap'
+      preLoaderRoute: typeof GenderPayGapRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/employment-rate': {
+      id: '/employment-rate'
+      path: '/employment-rate'
+      fullPath: '/employment-rate'
+      preLoaderRoute: typeof EmploymentRateRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/': {
       id: '/'
       path: '/'
@@ -53,17 +157,12 @@ declare module '@tanstack/react-router' {
 
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
+  EmploymentRateRoute: EmploymentRateRoute,
+  GenderPayGapRoute: GenderPayGapRoute,
+  InWorkPovertyRoute: InWorkPovertyRoute,
+  JobTenureRoute: JobTenureRoute,
+  WeeklyHoursRoute: WeeklyHoursRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
   ._addFileTypes<FileRouteTypes>()
-
-import type { getRouter } from './router.tsx'
-import type { startInstance } from './start.ts'
-declare module '@tanstack/react-start' {
-  interface Register {
-    ssr: true
-    router: Awaited<ReturnType<typeof getRouter>>
-    config: Awaited<ReturnType<typeof startInstance.getOptions>>
-  }
-}
