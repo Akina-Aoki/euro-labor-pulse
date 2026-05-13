@@ -90,7 +90,6 @@ function EmploymentRatePage() {
     return (
       <DashboardLayout>
         <PageHeader
-          eyebrow="Dataset · clean_employment_rate.csv"
           title="Employment Rate by Sex"
           description="Loading data…"
         />
