@@ -385,37 +385,27 @@ function Dashboard({ rows }: { rows: GpgRow[] }) {
         </ChartCard>
 
         <ChartCard
-          title={`Countries by Pay Gap Level (${year})`}
-          description="Geographic map fallback — count of countries per pay gap band."
+          title={`Gender Pay Gap Level in Europe (${year})`}
+          description="Hover a country to see its pay gap value and band."
         >
           {yearRows.length === 0 ? (
-            <EmptyState message="No pay gap level summary is available for the selected year." />
+            <EmptyState message="No pay gap data is available for the selected year." />
           ) : (
-            <ResponsiveContainer width="100%" height={340}>
-              <BarChart
-                data={levelSummary}
-                layout="vertical"
-                margin={{ top: 8, right: 24, left: 8, bottom: 8 }}
-              >
-                <CartesianGrid horizontal={false} stroke="rgba(33,56,133,0.1)" />
-                <XAxis type="number" allowDecimals={false} tick={{ fontSize: 11, fill: "#4a4b6b" }} />
-                <YAxis
-                  type="category"
-                  dataKey="level"
-                  width={110}
-                  tick={{ fontSize: 11, fill: "#070836" }}
-                />
-                <Tooltip
-                  formatter={(v: number) => [`${v} countries`, "Count"]}
-                  contentStyle={{ borderRadius: 8, border: "1px solid rgba(33,56,133,0.18)" }}
-                />
-                <Bar dataKey="count" radius={[0, 4, 4, 0]}>
-                  {levelSummary.map((d, i) => (
-                    <Cell key={i} fill={d.color} />
-                  ))}
-                </Bar>
-              </BarChart>
-            </ResponsiveContainer>
+            <EuropeTileMap
+              height={340}
+              data={yearRows.map((r) => ({ country: r.country, value: r.gender_pay_gap }))}
+              colorFor={(v) => PAY_GAP_LEVEL_COLORS[classifyPayGapLevel(v)]}
+              tooltipLines={({ country, value }) => {
+                const lvl = classifyPayGapLevel(value);
+                return value == null
+                  ? [country, "No data"]
+                  : [country, `Gender pay gap: ${value.toFixed(1)}%`, `Level: ${lvl}`];
+              }}
+              legend={PAY_GAP_LEVEL_ORDER.map((l) => ({
+                color: PAY_GAP_LEVEL_COLORS[l],
+                label: l,
+              })).concat([{ color: PAY_GAP_LEVEL_COLORS["No data"], label: "No data" }])}
+            />
           )}
         </ChartCard>
       </div>
