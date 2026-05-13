@@ -19,7 +19,6 @@ import {
   RotateCcw,
   TrendingDown,
   TrendingUp,
-  UsersRound,
   Users,
   X,
 } from "lucide-react";
