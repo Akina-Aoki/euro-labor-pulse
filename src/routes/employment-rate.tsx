@@ -127,7 +127,8 @@ function EmploymentRatePage() {
 }
 
 function Dashboard({ rows }: { rows: EmpRow[] }) {
-  const baseRows = rows;
+  const [region, setRegion] = useState<RegionName>(ALL_COUNTRIES_LABEL);
+  const baseRows = useMemo(() => filterRowsByRegion(rows, region), [rows, region]);
 
   const allYears = useMemo(
     () => Array.from(new Set(baseRows.map((r) => r.year))).sort((a, b) => a - b),
@@ -141,21 +142,28 @@ function Dashboard({ rows }: { rows: EmpRow[] }) {
 
   const defaultTrend = useMemo(() => {
     const present = DEFAULT_TREND_COUNTRIES.filter((c) => allCountries.includes(c));
-    return present.length ? present : allCountries.slice(0, 5);
+    if (present.length) return present;
+    return allCountries.slice(0, Math.min(5, allCountries.length));
   }, [allCountries]);
 
   const [year, setYear] = useState<number>(latestYear);
   const [sex, setSex] = useState<SexFilter>("all");
   const [trendCountries, setTrendCountries] = useState<string[]>(defaultTrend);
   const [sortDir, setSortDir] = useState<SortDir>("desc");
-  const [topN, setTopN] = useState<TopN>(15);
+  const [topN, setTopN] = useState<TopN>(10);
+
+  // When region changes, reset trend countries to defaults for the new region.
+  useEffect(() => {
+    setTrendCountries(defaultTrend);
+  }, [defaultTrend]);
 
   const resetFilters = () => {
+    setRegion(ALL_COUNTRIES_LABEL);
     setYear(latestYear);
     setSex("all");
     setTrendCountries(defaultTrend);
     setSortDir("desc");
-    setTopN(15);
+    setTopN(10);
   };
 
   const sLabel = sexLabel(sex);
