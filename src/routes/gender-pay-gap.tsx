@@ -48,6 +48,12 @@ import {
   DEFAULT_TREND_COUNTRIES,
   type GpgRow,
 } from "@/lib/gender-pay-gap";
+import {
+  filterRowsByRegion,
+  REGION_OPTIONS,
+  ALL_COUNTRIES_LABEL,
+  type RegionName,
+} from "@/lib/regions";
 
 export const Route = createFileRoute("/gender-pay-gap")({
   head: () => ({
