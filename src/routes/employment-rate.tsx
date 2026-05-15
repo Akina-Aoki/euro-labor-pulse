@@ -283,6 +283,8 @@ function Dashboard({ rows }: { rows: EmpRow[] }) {
         years={allYears}
         year={year}
         setYear={setYear}
+        region={region}
+        setRegion={setRegion}
         sex={sex}
         setSex={setSex}
         sortDir={sortDir}
