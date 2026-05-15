@@ -41,7 +41,7 @@ import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
 import {
   loadEmploymentRate,
-  isEuropean,
+  
   aggregate,
   aggregateBySex,
   sexLabel,
@@ -86,8 +86,6 @@ const EMP_LEGEND = [
 ];
 type SortDir = "desc" | "asc";
 type TopN = 10 | 15 | 20 | 0;
-type Coverage = "europe" | "all";
-
 function EmploymentRatePage() {
   const [rows, setRows] = useState<EmpRow[] | null>(null);
   const [error, setError] = useState<string | null>(null);
@@ -123,11 +121,7 @@ function EmploymentRatePage() {
 }
 
 function Dashboard({ rows }: { rows: EmpRow[] }) {
-  const [coverage, setCoverage] = useState<Coverage>("europe");
-
-  const baseRows = useMemo(() => {
-    return coverage === "europe" ? rows.filter((x) => isEuropean(x.country)) : rows;
-  }, [rows, coverage]);
+  const baseRows = rows;
 
   const allYears = useMemo(
     () => Array.from(new Set(baseRows.map((r) => r.year))).sort((a, b) => a - b),
@@ -150,16 +144,7 @@ function Dashboard({ rows }: { rows: EmpRow[] }) {
   const [sortDir, setSortDir] = useState<SortDir>("desc");
   const [topN, setTopN] = useState<TopN>(15);
 
-  useEffect(() => {
-    setTrendCountries((cur) => {
-      const valid = cur.filter((c) => allCountries.includes(c));
-      return valid.length ? valid : defaultTrend;
-    });
-    if (!allYears.includes(year)) setYear(latestYear);
-  }, [coverage]); // eslint-disable-line react-hooks/exhaustive-deps
-
   const resetFilters = () => {
-    setCoverage("europe");
     setYear(latestYear);
     setSex("all");
     setTrendCountries(defaultTrend);
@@ -290,8 +275,6 @@ function Dashboard({ rows }: { rows: EmpRow[] }) {
         setSortDir={setSortDir}
         topN={topN}
         setTopN={setTopN}
-        coverage={coverage}
-        setCoverage={setCoverage}
         onReset={resetFilters}
       />
 
@@ -526,7 +509,7 @@ function Dashboard({ rows }: { rows: EmpRow[] }) {
             <li><span className="text-foreground/70 font-medium">Unit:</span> Percentage of total population</li>
             <li><span className="text-foreground/70 font-medium">Age:</span> From 20 to 64 years</li>
             <li><span className="text-foreground/70 font-medium">Frequency:</span> Annual</li>
-            <li><span className="text-foreground/70 font-medium">Coverage:</span> {coverage === "europe" ? "Europe only" : "All available countries"}</li>
+            
           </ul>
           <SourceNote>Eurostat — ESTAT:TESEM010</SourceNote>
         </div>
@@ -579,19 +562,17 @@ function Filters(props: {
   setSortDir: (d: SortDir) => void;
   topN: TopN;
   setTopN: (n: TopN) => void;
-  coverage: Coverage;
-  setCoverage: (c: Coverage) => void;
   onReset: () => void;
 }) {
   const {
     years, year, setYear,
     sex, setSex, sortDir, setSortDir, topN, setTopN,
-    coverage, setCoverage, onReset,
+    onReset,
   } = props;
 
   return (
     <div className="rounded-xl border border-border bg-card p-4 shadow-sm">
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5 gap-3 items-end">
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3 items-end">
         <div>
           <Label className="text-xs uppercase tracking-wider text-muted-foreground mb-1.5 block">Year</Label>
           <Select value={String(year)} onValueChange={(v) => setYear(Number(v))}>
@@ -640,16 +621,6 @@ function Filters(props: {
           </Select>
         </div>
 
-        <div>
-          <Label className="text-xs uppercase tracking-wider text-muted-foreground mb-1.5 block">Coverage</Label>
-          <Select value={coverage} onValueChange={(v) => setCoverage(v as Coverage)}>
-            <SelectTrigger><SelectValue /></SelectTrigger>
-            <SelectContent>
-              <SelectItem value="europe">Europe only</SelectItem>
-              <SelectItem value="all">All available countries</SelectItem>
-            </SelectContent>
-          </Select>
-        </div>
       </div>
 
       <div className="flex justify-end mt-3">
