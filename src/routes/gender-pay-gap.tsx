@@ -72,7 +72,7 @@ export const Route = createFileRoute("/gender-pay-gap")({
 const TREND_COLORS = ["#5F3475", "#213885", "#893172", "#3FA796", "#C9A84C", "#1E6091", "#A14D8E"];
 
 type SortDir = "desc" | "asc";
-type TopN = 10 | 15 | 20 | 0; // 0 = all
+type TopN = 10 | 0; // 0 = all
 
 function GenderPayGapPage() {
   const [rows, setRows] = useState<GpgRow[] | null>(null);
