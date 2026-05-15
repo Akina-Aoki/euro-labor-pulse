@@ -48,6 +48,12 @@ import {
   DEFAULT_TREND_COUNTRIES,
   type GpgRow,
 } from "@/lib/gender-pay-gap";
+import {
+  filterRowsByRegion,
+  REGION_OPTIONS,
+  ALL_COUNTRIES_LABEL,
+  type RegionName,
+} from "@/lib/regions";
 
 export const Route = createFileRoute("/gender-pay-gap")({
   head: () => ({
@@ -66,7 +72,7 @@ export const Route = createFileRoute("/gender-pay-gap")({
 const TREND_COLORS = ["#5F3475", "#213885", "#893172", "#3FA796", "#C9A84C", "#1E6091", "#A14D8E"];
 
 type SortDir = "desc" | "asc";
-type TopN = 10 | 15 | 20 | 0; // 0 = all
+type TopN = 10 | 0; // 0 = all
 
 function GenderPayGapPage() {
   const [rows, setRows] = useState<GpgRow[] | null>(null);
@@ -104,26 +110,35 @@ function GenderPayGapPage() {
   return <Dashboard rows={rows} />;
 }
 
-function Dashboard({ rows }: { rows: GpgRow[] }) {
+function Dashboard({ rows: rawRows }: { rows: GpgRow[] }) {
+  const [region, setRegion] = useState<RegionName>(ALL_COUNTRIES_LABEL);
+  const rows = useMemo(() => filterRowsByRegion(rawRows, region), [rawRows, region]);
+
   const years = useMemo(() => uniqueYears(rows), [rows]);
   const countries = useMemo(() => uniqueCountries(rows), [rows]);
   const latestYear = years[years.length - 1] ?? 2024;
 
   const defaultTrend = useMemo(() => {
     const present = DEFAULT_TREND_COUNTRIES.filter((c) => countries.includes(c));
-    return present.length ? present : countries.slice(0, 5);
+    if (present.length) return present;
+    return countries.slice(0, Math.min(5, countries.length));
   }, [countries]);
 
   const [year, setYear] = useState<number>(latestYear);
   const [trendCountries, setTrendCountries] = useState<string[]>(defaultTrend);
   const [sortDir, setSortDir] = useState<SortDir>("desc");
-  const [topN, setTopN] = useState<TopN>(15);
+  const [topN, setTopN] = useState<TopN>(10);
+
+  useEffect(() => {
+    setTrendCountries(defaultTrend);
+  }, [defaultTrend]);
 
   const resetFilters = () => {
+    setRegion(ALL_COUNTRIES_LABEL);
     setYear(latestYear);
     setTrendCountries(defaultTrend);
     setSortDir("desc");
-    setTopN(15);
+    setTopN(10);
   };
 
   // KPI: all countries available for selected year
@@ -207,6 +222,8 @@ function Dashboard({ rows }: { rows: GpgRow[] }) {
         years={years}
         year={year}
         setYear={setYear}
+        region={region}
+        setRegion={setRegion}
         sortDir={sortDir}
         setSortDir={setSortDir}
         topN={topN}
@@ -481,6 +498,8 @@ function Filters({
   years,
   year,
   setYear,
+  region,
+  setRegion,
   sortDir,
   setSortDir,
   topN,
@@ -490,6 +509,8 @@ function Filters({
   years: number[];
   year: number;
   setYear: (y: number) => void;
+  region: RegionName;
+  setRegion: (r: RegionName) => void;
   sortDir: SortDir;
   setSortDir: (d: SortDir) => void;
   topN: TopN;
@@ -498,7 +519,7 @@ function Filters({
 }) {
   return (
     <div className="rounded-xl border border-border bg-card p-4 shadow-sm">
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3 items-end">
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3 items-end">
         <div>
           <Label className="text-xs uppercase tracking-wider text-muted-foreground mb-1.5 block">Year</Label>
           <Select value={String(year)} onValueChange={(v) => setYear(Number(v))}>
@@ -506,6 +527,17 @@ function Filters({
             <SelectContent>
               {[...years].reverse().map((y) => (
                 <SelectItem key={y} value={String(y)}>{y}</SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
+        </div>
+        <div>
+          <Label className="text-xs uppercase tracking-wider text-muted-foreground mb-1.5 block">European Region</Label>
+          <Select value={region} onValueChange={(v) => setRegion(v as RegionName)}>
+            <SelectTrigger><SelectValue /></SelectTrigger>
+            <SelectContent>
+              {REGION_OPTIONS.map((r) => (
+                <SelectItem key={r} value={r}>{r}</SelectItem>
               ))}
             </SelectContent>
           </Select>
@@ -526,8 +558,6 @@ function Filters({
             <SelectTrigger><SelectValue /></SelectTrigger>
             <SelectContent>
               <SelectItem value="10">Top 10</SelectItem>
-              <SelectItem value="15">Top 15</SelectItem>
-              <SelectItem value="20">Top 20</SelectItem>
               <SelectItem value="0">All Countries</SelectItem>
             </SelectContent>
           </Select>

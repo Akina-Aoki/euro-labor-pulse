@@ -50,6 +50,12 @@ import {
   type EmpRow,
   type SexFilter,
 } from "@/lib/employment-rate";
+import {
+  filterRowsByRegion,
+  REGION_OPTIONS,
+  ALL_COUNTRIES_LABEL,
+  type RegionName,
+} from "@/lib/regions";
 
 export const Route = createFileRoute("/employment-rate")({
   head: () => ({
@@ -85,7 +91,7 @@ const EMP_LEGEND = [
   { color: "#E5E7EB", label: "No data" },
 ];
 type SortDir = "desc" | "asc";
-type TopN = 10 | 15 | 20 | 0;
+type TopN = 10 | 0;
 function EmploymentRatePage() {
   const [rows, setRows] = useState<EmpRow[] | null>(null);
   const [error, setError] = useState<string | null>(null);
@@ -121,7 +127,8 @@ function EmploymentRatePage() {
 }
 
 function Dashboard({ rows }: { rows: EmpRow[] }) {
-  const baseRows = rows;
+  const [region, setRegion] = useState<RegionName>(ALL_COUNTRIES_LABEL);
+  const baseRows = useMemo(() => filterRowsByRegion(rows, region), [rows, region]);
 
   const allYears = useMemo(
     () => Array.from(new Set(baseRows.map((r) => r.year))).sort((a, b) => a - b),
@@ -135,21 +142,28 @@ function Dashboard({ rows }: { rows: EmpRow[] }) {
 
   const defaultTrend = useMemo(() => {
     const present = DEFAULT_TREND_COUNTRIES.filter((c) => allCountries.includes(c));
-    return present.length ? present : allCountries.slice(0, 5);
+    if (present.length) return present;
+    return allCountries.slice(0, Math.min(5, allCountries.length));
   }, [allCountries]);
 
   const [year, setYear] = useState<number>(latestYear);
   const [sex, setSex] = useState<SexFilter>("all");
   const [trendCountries, setTrendCountries] = useState<string[]>(defaultTrend);
   const [sortDir, setSortDir] = useState<SortDir>("desc");
-  const [topN, setTopN] = useState<TopN>(15);
+  const [topN, setTopN] = useState<TopN>(10);
+
+  // When region changes, reset trend countries to defaults for the new region.
+  useEffect(() => {
+    setTrendCountries(defaultTrend);
+  }, [defaultTrend]);
 
   const resetFilters = () => {
+    setRegion(ALL_COUNTRIES_LABEL);
     setYear(latestYear);
     setSex("all");
     setTrendCountries(defaultTrend);
     setSortDir("desc");
-    setTopN(15);
+    setTopN(10);
   };
 
   const sLabel = sexLabel(sex);
@@ -269,6 +283,8 @@ function Dashboard({ rows }: { rows: EmpRow[] }) {
         years={allYears}
         year={year}
         setYear={setYear}
+        region={region}
+        setRegion={setRegion}
         sex={sex}
         setSex={setSex}
         sortDir={sortDir}
@@ -556,6 +572,8 @@ function Filters(props: {
   years: number[];
   year: number;
   setYear: (y: number) => void;
+  region: RegionName;
+  setRegion: (r: RegionName) => void;
   sex: SexFilter;
   setSex: (s: SexFilter) => void;
   sortDir: SortDir;
@@ -566,13 +584,14 @@ function Filters(props: {
 }) {
   const {
     years, year, setYear,
+    region, setRegion,
     sex, setSex, sortDir, setSortDir, topN, setTopN,
     onReset,
   } = props;
 
   return (
     <div className="rounded-xl border border-border bg-card p-4 shadow-sm">
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3 items-end">
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5 gap-3 items-end">
         <div>
           <Label className="text-xs uppercase tracking-wider text-muted-foreground mb-1.5 block">Year</Label>
           <Select value={String(year)} onValueChange={(v) => setYear(Number(v))}>
@@ -580,6 +599,18 @@ function Filters(props: {
             <SelectContent>
               {[...years].reverse().map((y) => (
                 <SelectItem key={y} value={String(y)}>{y}</SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
+        </div>
+
+        <div>
+          <Label className="text-xs uppercase tracking-wider text-muted-foreground mb-1.5 block">European Region</Label>
+          <Select value={region} onValueChange={(v) => setRegion(v as RegionName)}>
+            <SelectTrigger><SelectValue /></SelectTrigger>
+            <SelectContent>
+              {REGION_OPTIONS.map((r) => (
+                <SelectItem key={r} value={r}>{r}</SelectItem>
               ))}
             </SelectContent>
           </Select>
@@ -614,8 +645,6 @@ function Filters(props: {
             <SelectTrigger><SelectValue /></SelectTrigger>
             <SelectContent>
               <SelectItem value="10">Top 10</SelectItem>
-              <SelectItem value="15">Top 15</SelectItem>
-              <SelectItem value="20">Top 20</SelectItem>
               <SelectItem value="0">All Countries</SelectItem>
             </SelectContent>
           </Select>
