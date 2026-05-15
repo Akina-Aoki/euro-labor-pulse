@@ -48,6 +48,12 @@ import {
   type IwpRow,
   type SexFilter,
 } from "@/lib/in-work-poverty";
+import {
+  filterRowsByRegion,
+  REGION_OPTIONS,
+  ALL_COUNTRIES_LABEL,
+  type RegionName,
+} from "@/lib/regions";
 
 export const Route = createFileRoute("/in-work-poverty")({
   head: () => ({
