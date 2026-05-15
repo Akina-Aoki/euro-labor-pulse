@@ -97,7 +97,7 @@ const COMPOSITION_DURATIONS: Duration[] = [
 ];
 
 type SortDir = "desc" | "asc";
-type TopN = 10 | 15 | 20 | 0;
+type TopN = 10 | 0;
 
 
 function JobTenurePage() {
