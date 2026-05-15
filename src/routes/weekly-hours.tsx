@@ -559,6 +559,8 @@ function Filters(props: {
   years: number[];
   year: number;
   setYear: (y: number) => void;
+  region: RegionName;
+  setRegion: (r: RegionName) => void;
   sex: SexFilter;
   setSex: (s: SexFilter) => void;
   sortDir: SortDir;
@@ -569,13 +571,14 @@ function Filters(props: {
 }) {
   const {
     years, year, setYear,
+    region, setRegion,
     sex, setSex, sortDir, setSortDir, topN, setTopN,
     onReset,
   } = props;
 
   return (
     <div className="rounded-xl border border-border bg-card p-4 shadow-sm">
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-3 items-end">
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5 gap-3 items-end">
         <div>
           <Label className="text-xs uppercase tracking-wider text-muted-foreground mb-1.5 block">Year</Label>
           <Select value={String(year)} onValueChange={(v) => setYear(Number(v))}>
@@ -583,6 +586,18 @@ function Filters(props: {
             <SelectContent>
               {[...years].reverse().map((y) => (
                 <SelectItem key={y} value={String(y)}>{y}</SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
+        </div>
+
+        <div>
+          <Label className="text-xs uppercase tracking-wider text-muted-foreground mb-1.5 block">European Region</Label>
+          <Select value={region} onValueChange={(v) => setRegion(v as RegionName)}>
+            <SelectTrigger><SelectValue /></SelectTrigger>
+            <SelectContent>
+              {REGION_OPTIONS.map((r) => (
+                <SelectItem key={r} value={r}>{r}</SelectItem>
               ))}
             </SelectContent>
           </Select>
@@ -617,8 +632,6 @@ function Filters(props: {
             <SelectTrigger><SelectValue /></SelectTrigger>
             <SelectContent>
               <SelectItem value="10">Top 10</SelectItem>
-              <SelectItem value="15">Top 15</SelectItem>
-              <SelectItem value="20">Top 20</SelectItem>
               <SelectItem value="0">All Countries</SelectItem>
             </SelectContent>
           </Select>
