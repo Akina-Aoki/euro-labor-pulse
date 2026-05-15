@@ -53,6 +53,12 @@ import {
   type Duration,
   type CydValue,
 } from "@/lib/job-tenure";
+import {
+  filterRowsByRegion,
+  REGION_OPTIONS,
+  ALL_COUNTRIES_LABEL,
+  type RegionName,
+} from "@/lib/regions";
 
 export const Route = createFileRoute("/job-tenure")({
   head: () => ({
