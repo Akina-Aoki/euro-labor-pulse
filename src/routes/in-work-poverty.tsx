@@ -251,8 +251,6 @@ function Dashboard({ rows }: { rows: IwpRow[] }) {
         setSortDir={setSortDir}
         topN={topN}
         setTopN={setTopN}
-        coverage={coverage}
-        setCoverage={setCoverage}
         onReset={resetFilters}
       />
 
