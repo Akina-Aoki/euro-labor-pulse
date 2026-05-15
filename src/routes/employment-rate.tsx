@@ -91,7 +91,7 @@ const EMP_LEGEND = [
   { color: "#E5E7EB", label: "No data" },
 ];
 type SortDir = "desc" | "asc";
-type TopN = 10 | 15 | 20 | 0;
+type TopN = 10 | 0;
 function EmploymentRatePage() {
   const [rows, setRows] = useState<EmpRow[] | null>(null);
   const [error, setError] = useState<string | null>(null);
