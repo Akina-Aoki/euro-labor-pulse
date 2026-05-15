@@ -222,6 +222,8 @@ function Dashboard({ rows: rawRows }: { rows: GpgRow[] }) {
         years={years}
         year={year}
         setYear={setYear}
+        region={region}
+        setRegion={setRegion}
         sortDir={sortDir}
         setSortDir={setSortDir}
         topN={topN}
