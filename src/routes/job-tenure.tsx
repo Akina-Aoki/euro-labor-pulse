@@ -342,6 +342,8 @@ function Dashboard({ rows }: { rows: JtRow[] }) {
         years={allYears}
         year={year}
         setYear={setYear}
+        region={region}
+        setRegion={setRegion}
         sex={sex}
         setSex={setSex}
         focusDuration={focusDuration}
