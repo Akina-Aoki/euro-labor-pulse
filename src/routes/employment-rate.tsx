@@ -50,6 +50,12 @@ import {
   type EmpRow,
   type SexFilter,
 } from "@/lib/employment-rate";
+import {
+  filterRowsByRegion,
+  REGION_OPTIONS,
+  ALL_COUNTRIES_LABEL,
+  type RegionName,
+} from "@/lib/regions";
 
 export const Route = createFileRoute("/employment-rate")({
   head: () => ({
