@@ -257,11 +257,6 @@ function Dashboard({ rows }: { rows: MwhRow[] }) {
         setSortDir={setSortDir}
         topN={topN}
         setTopN={setTopN}
-        coverage={coverage}
-        setCoverage={setCoverage}
-        sources={allSources}
-        source={source}
-        setSource={setSource}
         onReset={resetFilters}
       />
 
@@ -502,7 +497,7 @@ function Dashboard({ rows }: { rows: MwhRow[] }) {
             <li><span className="text-foreground/70 font-medium">Code:</span> LFSI_HRW_SEX_A</li>
             <li><span className="text-foreground/70 font-medium">Unit:</span> Hours per week</li>
             <li><span className="text-foreground/70 font-medium">Frequency:</span> Annual</li>
-            <li><span className="text-foreground/70 font-medium">Coverage:</span> {coverage === "europe" ? "Europe only" : "All available countries"}</li>
+            
           </ul>
           <SourceNote>ILOSTAT — LFSI_HRW_SEX_A</SourceNote>
         </div>
@@ -555,22 +550,17 @@ function Filters(props: {
   setSortDir: (d: SortDir) => void;
   topN: TopN;
   setTopN: (n: TopN) => void;
-  coverage: Coverage;
-  setCoverage: (c: Coverage) => void;
-  sources: string[];
-  source: string;
-  setSource: (s: string) => void;
   onReset: () => void;
 }) {
   const {
     years, year, setYear,
     sex, setSex, sortDir, setSortDir, topN, setTopN,
-    coverage, setCoverage, sources, source, setSource, onReset,
+    onReset,
   } = props;
 
   return (
     <div className="rounded-xl border border-border bg-card p-4 shadow-sm">
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-6 gap-3 items-end">
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-3 items-end">
         <div>
           <Label className="text-xs uppercase tracking-wider text-muted-foreground mb-1.5 block">Year</Label>
           <Select value={String(year)} onValueChange={(v) => setYear(Number(v))}>
@@ -619,31 +609,6 @@ function Filters(props: {
           </Select>
         </div>
 
-        <div>
-          <Label className="text-xs uppercase tracking-wider text-muted-foreground mb-1.5 block">Coverage</Label>
-          <Select value={coverage} onValueChange={(v) => setCoverage(v as Coverage)}>
-            <SelectTrigger><SelectValue /></SelectTrigger>
-            <SelectContent>
-              <SelectItem value="europe">Europe only</SelectItem>
-              <SelectItem value="all">All available countries</SelectItem>
-            </SelectContent>
-          </Select>
-        </div>
-
-        {sources.length > 1 && (
-          <div className="lg:col-span-2">
-            <Label className="text-xs uppercase tracking-wider text-muted-foreground mb-1.5 block">Source</Label>
-            <Select value={source} onValueChange={setSource}>
-              <SelectTrigger><SelectValue /></SelectTrigger>
-              <SelectContent>
-                <SelectItem value="all">All sources</SelectItem>
-                {sources.map((s) => (
-                  <SelectItem key={s} value={s}>{s}</SelectItem>
-                ))}
-              </SelectContent>
-            </Select>
-          </div>
-        )}
       </div>
 
       <div className="flex justify-end mt-3">
