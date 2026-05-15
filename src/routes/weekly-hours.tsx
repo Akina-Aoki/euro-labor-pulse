@@ -72,7 +72,7 @@ export const Route = createFileRoute("/weekly-hours")({
 
 const TREND_COLORS = ["#213885", "#5F3475", "#893172", "#3FA796", "#C9A84C", "#1E6091", "#A14D8E"];
 type SortDir = "desc" | "asc";
-type TopN = 10 | 15 | 20 | 0;
+type TopN = 10 | 0;
 
 
 function WeeklyHoursPage() {
