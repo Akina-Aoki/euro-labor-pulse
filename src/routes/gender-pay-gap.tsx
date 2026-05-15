@@ -110,26 +110,35 @@ function GenderPayGapPage() {
   return <Dashboard rows={rows} />;
 }
 
-function Dashboard({ rows }: { rows: GpgRow[] }) {
+function Dashboard({ rows: rawRows }: { rows: GpgRow[] }) {
+  const [region, setRegion] = useState<RegionName>(ALL_COUNTRIES_LABEL);
+  const rows = useMemo(() => filterRowsByRegion(rawRows, region), [rawRows, region]);
+
   const years = useMemo(() => uniqueYears(rows), [rows]);
   const countries = useMemo(() => uniqueCountries(rows), [rows]);
   const latestYear = years[years.length - 1] ?? 2024;
 
   const defaultTrend = useMemo(() => {
     const present = DEFAULT_TREND_COUNTRIES.filter((c) => countries.includes(c));
-    return present.length ? present : countries.slice(0, 5);
+    if (present.length) return present;
+    return countries.slice(0, Math.min(5, countries.length));
   }, [countries]);
 
   const [year, setYear] = useState<number>(latestYear);
   const [trendCountries, setTrendCountries] = useState<string[]>(defaultTrend);
   const [sortDir, setSortDir] = useState<SortDir>("desc");
-  const [topN, setTopN] = useState<TopN>(15);
+  const [topN, setTopN] = useState<TopN>(10);
+
+  useEffect(() => {
+    setTrendCountries(defaultTrend);
+  }, [defaultTrend]);
 
   const resetFilters = () => {
+    setRegion(ALL_COUNTRIES_LABEL);
     setYear(latestYear);
     setTrendCountries(defaultTrend);
     setSortDir("desc");
-    setTopN(15);
+    setTopN(10);
   };
 
   // KPI: all countries available for selected year
