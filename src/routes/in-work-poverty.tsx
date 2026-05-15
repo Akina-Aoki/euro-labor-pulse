@@ -71,7 +71,7 @@ export const Route = createFileRoute("/in-work-poverty")({
 
 const TREND_COLORS = ["#5F3475", "#213885", "#C9347B", "#E58A2B", "#3FA796", "#1E6091", "#A14D8E"];
 type SortDir = "desc" | "asc";
-type TopN = 10 | 15 | 20 | 0;
+type TopN = 10 | 0;
 
 
 function InWorkPovertyPage() {
