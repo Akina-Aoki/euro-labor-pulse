@@ -40,7 +40,7 @@ import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
 import {
   loadWeeklyHours,
-  isEuropean,
+  
   aggregate,
   aggregateBySex,
   sexLabel,
@@ -67,7 +67,7 @@ export const Route = createFileRoute("/weekly-hours")({
 const TREND_COLORS = ["#213885", "#5F3475", "#893172", "#3FA796", "#C9A84C", "#1E6091", "#A14D8E"];
 type SortDir = "desc" | "asc";
 type TopN = 10 | 15 | 20 | 0;
-type Coverage = "europe" | "all";
+
 
 function WeeklyHoursPage() {
   const [rows, setRows] = useState<MwhRow[] | null>(null);
@@ -104,20 +104,7 @@ function WeeklyHoursPage() {
 }
 
 function Dashboard({ rows }: { rows: MwhRow[] }) {
-  // Coverage + Source filters drive the entire dataset slice
-  const [coverage, setCoverage] = useState<Coverage>("europe");
-  const allSources = useMemo(
-    () => Array.from(new Set(rows.map((r) => r.source_label).filter(Boolean) as string[])).sort(),
-    [rows],
-  );
-  const [source, setSource] = useState<string>("all");
-
-  const baseRows = useMemo(() => {
-    let r = rows;
-    if (coverage === "europe") r = r.filter((x) => isEuropean(x.country));
-    if (source !== "all") r = r.filter((x) => x.source_label === source);
-    return r;
-  }, [rows, coverage, source]);
+  const baseRows = rows;
 
   const allYears = useMemo(
     () => Array.from(new Set(baseRows.map((r) => r.year))).sort((a, b) => a - b),
@@ -140,18 +127,7 @@ function Dashboard({ rows }: { rows: MwhRow[] }) {
   const [sortDir, setSortDir] = useState<SortDir>("desc");
   const [topN, setTopN] = useState<TopN>(15);
 
-  // Refresh defaults when coverage changes (so trend countries are valid)
-  useEffect(() => {
-    setTrendCountries((cur) => {
-      const valid = cur.filter((c) => allCountries.includes(c));
-      return valid.length ? valid : defaultTrend;
-    });
-    if (!allYears.includes(year)) setYear(latestYear);
-  }, [coverage, source]); // eslint-disable-line react-hooks/exhaustive-deps
-
   const resetFilters = () => {
-    setCoverage("europe");
-    setSource("all");
     setYear(latestYear);
     setSex("all");
     setTrendCountries(defaultTrend);
