@@ -49,6 +49,12 @@ import {
   type MwhRow,
   type SexFilter,
 } from "@/lib/weekly-hours";
+import {
+  filterRowsByRegion,
+  REGION_OPTIONS,
+  ALL_COUNTRIES_LABEL,
+  type RegionName,
+} from "@/lib/regions";
 
 export const Route = createFileRoute("/weekly-hours")({
   head: () => ({
