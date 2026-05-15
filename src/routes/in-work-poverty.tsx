@@ -258,6 +258,8 @@ function Dashboard({ rows }: { rows: IwpRow[] }) {
         years={allYears}
         year={year}
         setYear={setYear}
+        region={region}
+        setRegion={setRegion}
         sex={sex}
         setSex={setSex}
         sortDir={sortDir}
